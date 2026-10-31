@@ -1,7 +1,7 @@
 # 6-DOF Stewart Platform (Ball & Plate) Digital Twin & Web Visualizer
 
 🌐 **Canlı Simülasyon (Live Demo):** [https://alperctn.github.io/stewart-platform-simulator/](https://alperctn.github.io/stewart-platform-simulator/)  
-📄 **Bitirme Tezi Raporu:** [Bitirme_Projesi_Raporu.docx](Bitirme_Projesi_Raporu.docx)
+📄 **Bitirme Tezi Raporu (PDF):** [Bitirme_Projesi_Raporu.pdf](Bitirme_Projesi_Raporu.pdf)
 
 Bu proje; Uşak Üniversitesi Mühendislik Fakültesi Elektrik-Elektronik Mühendisliği Bölümü Bitirme Tezi kapsamında geliştirilmiş, 6 Serbestlik Dereceli (6-DOF) paralel manipülatör yapısına sahip **Stewart Platformu tabanlı Top ve Plaka (Ball & Plate) dengeleme sistemi** için **Web Tabanlı Sayısal İkiz (Digital Twin), 3B Fizik Simülatörü ve Gerçek Zamanlı Telemetri** arayüzüdür.
 
@@ -45,7 +45,7 @@ Bu proje; Uşak Üniversitesi Mühendislik Fakültesi Elektrik-Elektronik Mühen
 | `app.js` | Uygulama & Serial | Web Serial API entegrasyonu, telemetri veri işleme, etkileşimli sürükle-bırak ve yörünge takibi. |
 | `charts.js` | Grafik Motoru | Chart.js ile gerçek zamanlı telemetri çizimi (konum, hız, eğim). |
 | `style.css` | Arayüz Tasarımı | Modern karanlık tema, yarı saydam cam efektleri ve responsive grid düzeni. |
-| `Bitirme_Projesi_Raporu.docx` | Tez Raporu | Projenin detaylı teorik altyapısı, kinematik denklemleri ve analiz raporu. |
+| `Bitirme_Projesi_Raporu.pdf` | Tez Raporu (PDF) | Projenin 9 sayfalık tam akademik raporu (kurulum, ters kinematik, fizik formülleri ve test grafikleri). |
 
 ---
 
