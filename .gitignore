@@ -1,0 +1,5 @@
+*.ps1
+_visual_test.html
+*.bak
+.DS_Store
+Thumbs.db

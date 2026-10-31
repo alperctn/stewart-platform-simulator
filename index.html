@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stewart Platform - Ball & Plate PID Visualizer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Three.js & OrbitControls -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar: Configuration & Controls -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i data-lucide="layers" class="brand-icon"></i>
+                <div class="brand-text">
+                    <h1>Stewart Platform</h1>
+                    <span>Ball & Plate PID Analyzer</span>
+                </div>
+            </div>
+
+            <!-- Connection & Mode Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    <i data-lucide="cpu"></i>
+                    <h2>Bağlantı & Mod</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="control-group">
+                        <label>Çalışma Modu</label>
+                        <div class="toggle-buttons">
+                            <button id="btn-mode-serial" class="toggle-btn active">
+                                <i data-lucide="usb"></i> Seri Port
+                            </button>
+                            <button id="btn-mode-sim" class="toggle-btn">
+                                <i data-lucide="play"></i> Simülatör
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="serial-controls">
+                        <div class="control-group">
+                            <label for="baudrate">Baud Rate</label>
+                            <select id="baudrate">
+                                <option value="9600">9600</option>
+                                <option value="38400">38400</option>
+                                <option value="57600">57600</option>
+                                <option value="115200" selected>115200</option>
+                            </select>
+                        </div>
+                        <button id="btn-connect" class="btn btn-primary btn-full">
+                            <i data-lucide="link"></i> Bağlan
+                        </button>
+                    </div>
+
+                    <div id="sim-controls" class="hidden">
+                        <div class="control-row">
+                            <button id="btn-sim-reset" class="btn btn-secondary btn-full">
+                                <i data-lucide="rotate-ccw"></i> Sıfırla
+                            </button>
+                            <button id="btn-sim-disturbance" class="btn btn-danger btn-full">
+                                <i data-lucide="zap"></i> İtme Ver
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PID & Simulation Parameters Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    <i data-lucide="sliders"></i>
+                    <h2>PID Katsayıları <span class="badge" id="lbl-pid-source">Donanım</span></h2>
+                </div>
+                <div class="panel-body">
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <span>Kp (Oransal)</span>
+                            <span id="val-kp">0.035</span>
+                        </div>
+                        <input type="range" id="slider-kp" min="0" max="0.2" step="0.001" value="0.035" disabled>
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <span>Kd (Türevsel)</span>
+                            <span id="val-kd">0.012</span>
+                        </div>
+                        <input type="range" id="slider-kd" min="0" max="0.1" step="0.001" value="0.012" disabled>
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <span>Ki (İntegral)</span>
+                            <span id="val-ki">0.000</span>
+                        </div>
+                        <input type="range" id="slider-ki" min="0" max="0.005" step="0.0001" value="0.000" disabled>
+                    </div>
+                    <div class="note-box" id="pid-note">
+                        <i data-lucide="info"></i>
+                        <span>Katsayılar donanım modunda Arduino kodundaki sabitlerden okunur. Düzenlemek için Simülatör moduna geçin.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Target & Trajectory Control Panel (Simulator Mode Only) -->
+            <div class="panel hidden" id="panel-target">
+                <div class="panel-header">
+                    <i data-lucide="target"></i>
+                    <h2>Hedef & Yörünge Takibi</h2>
+                </div>
+                <div class="panel-body">
+                    <!-- 2D Interactive Drawing Pad -->
+                    <div class="trajectory-pad-wrapper">
+                        <canvas id="pad-canvas" width="222" height="130"></canvas>
+                        <div class="pad-overlay-info" id="pad-info">Tıklayarak veya çizerek yörünge oluşturun</div>
+                    </div>
+
+                    <!-- Preset Shape Buttons -->
+                    <div class="shape-buttons-grid">
+                        <button class="btn btn-sm btn-secondary" id="btn-shape-circle" title="Daire Yörüngesi">
+                            <i data-lucide="circle"></i> Daire
+                        </button>
+                        <button class="btn btn-sm btn-secondary" id="btn-shape-triangle" title="Üçgen Yörüngesi">
+                            <i data-lucide="triangle"></i> Üçgen
+                        </button>
+                        <button class="btn btn-sm btn-secondary" id="btn-shape-square" title="Kare Yörüngesi">
+                            <i data-lucide="square"></i> Kare
+                        </button>
+                        <button class="btn btn-sm btn-secondary" id="btn-shape-infinity" title="Sekiz / Sonsuzluk Yörüngesi">
+                            <i data-lucide="infinity"></i> Sekiz
+                        </button>
+                    </div>
+
+                    <!-- Trajectory Playback Controls -->
+                    <div class="control-row" style="margin-top: 8px;">
+                        <button id="btn-traj-play" class="btn btn-primary btn-full">
+                            <i data-lucide="play"></i> Takip Başlat
+                        </button>
+                        <button id="btn-traj-clear" class="btn btn-danger" style="width: auto; padding: 0 12px;" title="Temizle">
+                            <i data-lucide="trash-2"></i>
+                        </button>
+                    </div>
+
+                    <!-- Speed Slider -->
+                    <div class="slider-group" style="margin-top: 10px;">
+                        <div class="slider-header">
+                            <span>Yörünge Hızı</span>
+                            <span id="val-traj-speed">35 mm/s</span>
+                        </div>
+                        <input type="range" id="slider-traj-speed" min="10" max="80" step="5" value="35">
+                    </div>
+
+                    <!-- Manual Target Sliders -->
+                    <div class="slider-group" style="margin-top: 10px;">
+                        <div class="slider-header">
+                            <span>Manuel Hedef X (mm)</span>
+                            <span id="val-target-x">0</span>
+                        </div>
+                        <input type="range" id="slider-target-x" min="-111" max="111" step="1" value="0">
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <span>Manuel Hedef Y (mm)</span>
+                            <span id="val-target-y">0</span>
+                        </div>
+                        <input type="range" id="slider-target-y" min="-65" max="65" step="1" value="0">
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Limits & Info -->
+            <div class="panel">
+                <div class="panel-header">
+                    <i data-lucide="info"></i>
+                    <h2>Sistem Ölçüleri</h2>
+                </div>
+                <div class="panel-body info-list">
+                    <div class="info-item">
+                        <span class="info-label">Taban Yarıçapı:</span>
+                        <span class="info-value">11.0 cm</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Platform Yarıçapı:</span>
+                        <span class="info-value">5.6 cm</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Bacak Uzunluğu:</span>
+                        <span class="info-value">21.5 cm</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Servo Kol Uzunluğu:</span>
+                        <span class="info-value">4.2 cm</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Z Yükseklik:</span>
+                        <span class="info-value">19.5 cm</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Dashboard Stats -->
+            <div class="dashboard-metrics">
+                <div class="metric-card">
+                    <div class="metric-icon x-color"><i data-lucide="move-horizontal"></i></div>
+                    <div class="metric-details">
+                        <span class="metric-label">X Pozisyonu</span>
+                        <h3 id="lbl-pos-x">0.00 <span class="unit">mm</span></h3>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon y-color"><i data-lucide="move-vertical"></i></div>
+                    <div class="metric-details">
+                        <span class="metric-label">Y Pozisyonu</span>
+                        <h3 id="lbl-pos-y">0.00 <span class="unit">mm</span></h3>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon pitch-color"><i data-lucide="rotate-3d"></i></div>
+                    <div class="metric-details">
+                        <span class="metric-label">Pitch Açısı</span>
+                        <h3 id="lbl-pitch">0.00 <span class="unit">°</span></h3>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon roll-color"><i data-lucide="refresh-cw"></i></div>
+                    <div class="metric-details">
+                        <span class="metric-label">Roll Açısı</span>
+                        <h3 id="lbl-roll">0.00 <span class="unit">°</span></h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visualizer Layout: 3D Scene + Real-time Graphs -->
+            <div class="visualizer-grid">
+                <!-- 3D Platform Visualizer -->
+                <div class="visualizer-card 3d-container">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i data-lucide="box"></i>
+                            <h3>3D Platform Simülasyonu</h3>
+                        </div>
+                        <div class="card-actions">
+                            <span class="status-indicator disconnected" id="status-badge">Bağlantı Yok</span>
+                        </div>
+                    </div>
+                    <div class="card-body canvas-wrapper" id="canvas-container">
+                        <!-- Three.js canvas goes here -->
+                    </div>
+                </div>
+
+                <!-- PID Real-time Charts -->
+                <div class="visualizer-card charts-container">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i data-lucide="trending-up"></i>
+                            <h3>Real-time PID Analizi</h3>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn btn-sm btn-secondary active" id="btn-chart-pos">Pozisyon</button>
+                            <button class="btn btn-sm btn-secondary" id="btn-chart-vel">Hız</button>
+                            <button class="btn btn-sm btn-secondary" id="btn-chart-angles">Açı</button>
+                        </div>
+                    </div>
+                    <div class="card-body chart-wrapper">
+                        <div class="chart-canvas-container" id="container-pos-chart">
+                            <canvas id="chart-pos"></canvas>
+                        </div>
+                        <div class="chart-canvas-container hidden" id="container-vel-chart">
+                            <canvas id="chart-vel"></canvas>
+                        </div>
+                        <div class="chart-canvas-container hidden" id="container-angles-chart">
+                            <canvas id="chart-angles"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terminal / Console for Raw Serial Input -->
+            <div class="terminal-card">
+                <div class="terminal-header" id="terminal-toggle">
+                    <div class="card-title">
+                        <i data-lucide="terminal"></i>
+                        <h3>Seri Port Ham Veri Günlüğü</h3>
+                    </div>
+                    <div class="terminal-actions">
+                        <button class="btn btn-sm btn-secondary" id="btn-clear-terminal">Temizle</button>
+                        <i data-lucide="chevron-down" id="terminal-chevron"></i>
+                    </div>
+                </div>
+                <div class="terminal-body collapsed" id="terminal-log">
+                    <div class="terminal-line system-line">[Sistem] Port dinlenmeye hazır. Bağlantı kurun veya Simülatörü başlatın.</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="simulation.js"></script>
+    <script src="charts.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

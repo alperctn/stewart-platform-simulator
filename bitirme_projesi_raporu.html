@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stewart Platformu Top-Plaka Dengeleme - Bitirme Projesi Raporu</title>
+    <style>
+        :root {
+            --primary: #1f4e79;
+            --primary-light: #2e75b6;
+            --bg-color: #f6f8fa;
+            --card-bg: #ffffff;
+            --border-color: #d0d7de;
+            --text-color: #24292f;
+            --muted-text: #57606a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+            font-size: 15px;
+            line-height: 1.65;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            padding: 30px 20px 80px 20px;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 50px 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Başlık Alanı */
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #e1e4e8;
+            padding-bottom: 25px;
+            margin-bottom: 35px;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            color: var(--primary);
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 17px;
+            color: var(--primary-light);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .header .meta {
+            font-size: 13.5px;
+            color: var(--muted-text);
+        }
+
+        /* Metin Elemanları */
+        h2 {
+            font-size: 20px;
+            color: var(--primary);
+            border-bottom: 1.5px solid #d0d7de;
+            padding-bottom: 6px;
+            margin-top: 36px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        h3 {
+            font-size: 16.5px;
+            color: var(--primary-light);
+            margin-top: 24px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin-bottom: 14px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin-bottom: 16px;
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        strong {
+            color: #092440;
+        }
+
+        /* Matematik ve Formül Blokları */
+        .equation-box {
+            background-color: #f0f7ff;
+            border-left: 4px solid var(--primary-light);
+            padding: 12px 18px;
+            margin: 16px 0;
+            border-radius: 0 6px 6px 0;
+            font-family: "Cambria Math", "Georgia", serif;
+            font-size: 15.5px;
+            color: #0b2545;
+            overflow-x: auto;
+        }
+
+        .equation-title {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--primary-light);
+            margin-bottom: 4px;
+        }
+
+        /* Vurgu / Uyarı Kutuları */
+        .alert-box {
+            background-color: #fff8e6;
+            border-left: 4px solid #f59e0b;
+            padding: 14px 18px;
+            margin: 18px 0;
+            border-radius: 0 6px 6px 0;
+            font-size: 14.5px;
+        }
+
+        .alert-box.success {
+            background-color: #f0fdf4;
+            border-left-color: #10b981;
+        }
+
+        .alert-box strong {
+            color: #b45309;
+        }
+
+        .alert-box.success strong {
+            color: #047857;
+        }
+
+        /* Tablolar */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 10px 14px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        /* Kod Blokları */
+        pre {
+            background-color: #1e293b;
+            color: #f8fafc;
+            padding: 14px 18px;
+            border-radius: 8px;
+            font-family: "Consolas", "Courier New", monospace;
+            font-size: 13.5px;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 14px 0;
+        }
+
+        code {
+            font-family: "Consolas", "Courier New", monospace;
+            background-color: #e2e8f0;
+            color: #0f172a;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        pre code {
+            background-color: transparent;
+            color: inherit;
+            padding: 0;
+        }
+
+        /* Yazdırma / PDF Butonu */
+        .print-btn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #1f4e79;
+            color: white;
+            border: none;
+            padding: 12px 22px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(31, 78, 121, 0.35);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            z-index: 1000;
+        }
+
+        .print-btn:hover {
+            background: #163857;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(31, 78, 121, 0.45);
+        }
+
+        @media print {
+            body { padding: 0; background: white; }
+            .container { box-shadow: none; border: none; padding: 0; max-width: 100%; }
+            .print-btn { display: none; }
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 25px 20px; }
+            .header h1 { font-size: 21px; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="print-btn" onclick="window.print()">🖨️ PDF Olarak Kaydet / Yazdır</button>
+
+    <div class="container">
+        <!-- Başlık -->
+        <div class="header">
+            <h1>6-Serbestlik Dereceli (6-DOF) Stewart Platformu Tabanlı Top ve Plaka (Ball & Plate) Dengeleme Sistemi</h1>
+            <div class="subtitle">Bitirme Projesi Kapsamlı Teknik Raporu</div>
+            <div class="meta">Mekatronik Sistem Tasarımı, Ters Kinematik Modelleme, PID Kontrol, Web Serial Telemetrisi ve Dijital İkiz Analizi</div>
+        </div>
+
+        <!-- Bölüm 1 -->
+        <h2>1. Giriş ve Projenin Amacı</h2>
+        <p>Mekatronik ve kontrol mühendisliği eğitiminde ve endüstriyel uygulamalarda <strong>"Ball and Plate" (Top ve Plaka)</strong> problemi; doğrusal olmayan dinamik yapısı, açık çevrimde kararsız (unstable) olması ve çok değişkenli (MIMO / Cross-coupled) kontrol gereksinimi nedeniyle klasik bir kıyaslama (benchmark) problemidir.</p>
+
+        <p>Bu proje kapsamında aşağıdaki bileşenler başarıyla tasarlanmış, üretilmiş ve doğrulanmıştır:</p>
+        <ul>
+            <li><strong>Mekanik Alt Sistem:</strong> 6 adet bağımsız yüksek torklu RC servonun paralel manipülatör mimarisinde çalıştığı 6-DOF Stewart-Gough platformu.</li>
+            <li><strong>Algılayıcı Alt Sistemi:</strong> Topun plaka üzerindeki anlık X-Y koordinatlarını tespit etmek amacıyla 222 mm x 130 mm boyutlarında 4-telli rezistif dokunmatik panel.</li>
+            <li><strong>Gömülü Kontrol Birimi:</strong> ESP32 mikrodenetleyicisi üzerinde medyan + EMA filtreleme, kinematik koordinat rotasyon dönüşümleri, sayısal hız türevi, integral doyum sınırlaması (anti-windup) ve açısal adım sınırlamalı PID kontrol döngüsü.</li>
+            <li><strong>Web Tabanlı Dijital İkiz ve Telemetri:</strong> Ek sürücü veya program kurulumu gerektirmeden doğrudan Google Chrome ve Microsoft Edge tarayıcıları üzerinden çalışan Web Serial API, Three.js 3D etkileşimli model ve Chart.js gerçek zamanlı telemetri akışı.</li>
+        </ul>
+
+        <!-- Bölüm 2 -->
+        <h2>2. Sistemin Matematiksel Modellenmesi ve Kinematik Analiz</h2>
+
+        <h3>2.1. Eğik Düzlemde Kürenin Yuvarlanma Dinamiği</h3>
+        <p>Yarıçapı <em>R</em>, kütlesi <em>m</em> ve eylemsizlik momenti <em>I = (2/5)mR²</em> olan homojen dolu bir çelik küre, <em>θ</em> açısıyla eğilmiş bir plaka üzerinde kaymadan yuvarlandığında (pure rolling), kürenin ötelenme ivmesi (<em>a</em>) Newton-Euler hareket denklemleri ile türetilir:</p>
+
+        <div class="equation-box">
+            <div class="equation-title">Kayan ve Yuvarlanan Küre Hareket Denklemleri</div>
+            Σ F = m · a = m · g · sin(θ) - f<sub>s</sub><br>
+            Σ τ = I · α = I · (a / R) = f<sub>s</sub> · R &nbsp;⇒&nbsp; f<sub>s</sub> = (2/5) · m · a<br>
+            m · a + (2/5) · m · a = m · g · sin(θ) &nbsp;⇒&nbsp; (7/5) · a = g · sin(θ)<br>
+            <strong>a = (5/7) · g · sin(θ)</strong>
+        </div>
+
+        <p>Küçük açı yaklaşımlarında (sinθ ≈ θ) plaka üzerindeki X ve Y ivmeleri doğrudan Pitch (θ<sub>pitch</sub>) ve Roll (θ<sub>roll</sub>) eğim açılarına doğrusal bağımlıdır:</p>
+
+        <div class="equation-box">
+            <div class="equation-title">Eksenel İvme İfadeleri</div>
+            d²x/dt² ≈ (5/7) · g · θ<sub>x</sub>(t) - c<sub>v</sub> · (dx/dt)<br>
+            d²y/dt² ≈ (5/7) · g · θ<sub>y</sub>(t) - c<sub>v</sub> · (dy/dt)
+        </div>
+        <p>Burada <em>c<sub>v</sub></em> yuvarlanma sürtünme katsayısıdır. Bu denklem çifti, sistemin çift integratör (<strong>1/s²</strong>) transfer fonksiyonuna sahip olduğunu; dolayısıyla faz gerilemesi (phase lag) ve sönümlenmeyen salınımlara açık olduğunu gösterir.</p>
+
+        <h3>2.2. 6-DOF Stewart Platformu Ters Kinematiği (Inverse Kinematics)</h3>
+        <p>Stewart platformunda amaç, üst plakanın istenen konum (<strong>T = [p<sub>x</sub>, p<sub>y</sub>, p<sub>z</sub>]<sup>T</sup></strong>) ve yönelimine (Roll: <em>φ</em>, Pitch: <em>θ</em>, Yaw: <em>ψ</em>) karşılık gelen 6 adet servonun açılarını (<em>α<sub>i</sub>, i=1..6</em>) analitik olarak hesaplamaktır.</p>
+
+        <p><strong>A. Rotasyon Matrisi:</strong> Z-Y-X Euler açısı dönüşüm matrisi R<sub>B</sub><sup>P</sup>:</p>
+        <div class="equation-box">
+            R = R<sub>z</sub>(ψ) · R<sub>y</sub>(θ) · R<sub>x</sub>(φ)
+        </div>
+
+        <p><strong>B. Eklem ve Bacak Vektörleri:</strong> Taban yarıçapı R<sub>B</sub> = 12.0 cm, plaka yarıçapı R<sub>P</sub> = 10.0 cm ve motor açıları Λ<sub>i</sub> = [330°, 30°, 90°, 150°, 210°, 270°] olmak üzere:</p>
+        <ul>
+            <li>Taban eklem noktaları: <strong>B<sub>i</sub> = [R<sub>B</sub>·cos(Λ<sub>i</sub>), R<sub>B</sub>·sin(Λ<sub>i</sub>), 0]<sup>T</sup></strong></li>
+            <li>Plaka eklem noktaları: <strong>P<sub>i</sub> = T + R · [R<sub>P</sub>·cos(Λ<sub>i</sub>), R<sub>P</sub>·sin(Λ<sub>i</sub>), 0]<sup>T</sup></strong></li>
+            <li>Aktüatör bacak vektörü: <strong>L<sub>i</sub> = P<sub>i</sub> - B<sub>i</sub></strong></li>
+        </ul>
+
+        <p><strong>C. Servo Motor Açı Analitiği:</strong> Servo kolu uzunluğu <em>a = 4.0 cm</em>, bacak bağlantı çubuğu (rot) <em>d = 22.0 cm</em> olmak üzere motor düzlemine indirgenmiş koordinatlarda kapalı kinematik zincir denklemi çözülerek servo açısı tam analitik olarak hesaplanır:</p>
+        <div class="equation-box">
+            <div class="equation-title">Trigonometrik Servo Açı Çözümü</div>
+            r = √(L'<sub>i,x</sub>² + L'<sub>i,z</sub>²)<br>
+            K = (L'<sub>i,x</sub>² + L'<sub>i,y</sub>² + L'<sub>i,z</sub>² + a² - d²) / (2 · a)<br>
+            <strong>α<sub>i</sub> = arcsin(K / r) - atan2(L'<sub>i,x</sub>, L'<sub>i,z</sub>)</strong><br>
+            <strong>θ<sub>servo, i</sub> = 90° + (180° / π) · α<sub>i</sub></strong>
+        </div>
+
+        <!-- Bölüm 3 -->
+        <h2>3. Algılayıcı ve Sinyal İşleme Mimarisi</h2>
+        <p>4-telli rezistif dokunmatik panel X ve Y eksenlerinde ardışık gerilim bölücü mantığıyla çalışır. Topun yuvarlanırken oluşturduğu mikroskobik temas sıçramaları ve ADC örnekleme gürültüsünü engellemek için çok katmanlı bir filtreleme mimarisi uygulanmıştır:</p>
+
+        <ol>
+            <li><strong>Aykırı Değer Filtresi (Trimmed Mean):</strong> Her çevrimde 8 adet ADC okuması alınır, Bubble Sort ile sıralanır, en uçtaki 4 değer elenerek ortadaki 4 değerin ortalaması alınır.</li>
+            <li><strong>Fiziksel Ekran Haritalaması:</strong> Ham ADC değerleri dokunmatik ekranın fiziksel milimetre sınırlarına haritalanır: X ekseni [-111, +111] mm, Y ekseni [-65, +65] mm.</li>
+            <li><strong>Üstel Hareketli Ortalama (EMA):</strong>
+                <div class="equation-box">x<sub>filtre</sub>[k] = (1 - r) · x<sub>filtre</sub>[k-1] + r · x[k], &nbsp; (r = 0.30)</div>
+            </li>
+            <li><strong>Sayısal Hız Kestirimi (Türev Terimi):</strong>
+                <div class="equation-box">v<sub>x</sub>[k] = clip((x<sub>filtre</sub>[k] - x<sub>filtre</sub>[k-1]) / Δt, -500, 500)</div>
+            </li>
+        </ol>
+
+        <!-- Bölüm 4 -->
+        <h2>4. Kritik Dinamik Problem: Kısa Kenar Rezonansı ve Kazanç Asimetrisi Analizi</h2>
+
+        <div class="alert-box">
+            <strong>Önemli Saha Bulgusu:</strong> Testler sırasında, uzun kenarda (222 mm) top stabil şekilde merkeze toparlanırken; kısa kenarda (130 mm) topun salınım genliğinin her çevrimde katlanarak arttığı, toparlanmaya çalışırken ivmelendiği ve platformdan hızla düştüğü gözlemlenmiştir.
+        </div>
+
+        <h3>4.1. Kök Neden Analizi (Root Cause)</h3>
+        <p>Bu kararsızlığın arkasında iki temel matematiksel ve dinamik faktör saptanmıştır:</p>
+
+        <p><strong>A. Koordinat Dönüşümündeki Boyut Çarpanı Dengesizliği:</strong><br>
+        Gömülü koddaki dönüşüm incelendiğinde:</p>
+        <div class="equation-box">
+            x<sub>hesap</sub> = (x<sub>c</sub> · 130 / 257) - (y<sub>c</sub> · 222 / 257)<br>
+            y<sub>hesap</sub> = -(x<sub>c</sub> · 130 / 257) - (y<sub>c</sub> · 222 / 257)
+        </div>
+        <p>Burada <em>x<sub>c</sub></em> uzun kenar (222 mm), <em>y<sub>c</sub></em> kısa kenardır (130 mm). Katsayılar incelendiğinde:</p>
+        <div class="equation-box">
+            130 / 257 ≈ 0.5058 &nbsp;|&nbsp; 222 / 257 ≈ 0.8638<br>
+            <strong>Kazanç Oranı = 0.8638 / 0.5058 ≈ 1.7077 (%71 Daha Yüksek Kazanç)</strong>
+        </div>
+        <p><strong>Mühendislik Sonucu:</strong> Sistemde tek bir <code>K<sub>p</sub> = 0.035</code> tanımlanmasına rağmen; top kısa kenarda (Y) 10 mm kaydığında kontrolcüye giden hata sinyali, uzun kenardaki (X) 10 mm sapmaya göre <strong>%71 daha büyük</strong> üretilmektedir. Bu durum kısa kenarda kontrol döngüsünü aşırı kazanç (over-gain) bölgesine sokmaktadır.</p>
+
+        <p><strong>B. Faz Gecikmesi (Phase Lag) ve Pozitif Besleme:</strong><br>
+        Kısa kenar sınırları (±65 mm) dar olduğu için topun bu eksendeki salınım doğal frekansı daha yüksektir. EMA filtresinin (r = 0.30) getirdiği faz gecikmesi (τ ≈ 100 ms), yüksek frekanslı kısa kenar salınımında türev teriminin (K<sub>d</sub>) frenleme yapmak yerine hareketi destekleyen bir pozitif geri beslemeye dönüşmesine yol açmaktadır.</p>
+
+        <h3>4.2. Sayısal ve Simülatör Doğrulama Tablosu</h3>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Test Senaryosu</th>
+                    <th>Başlangıç Konumu</th>
+                    <th>Kp</th>
+                    <th>Kd</th>
+                    <th>Katsayı (B)</th>
+                    <th>15 Saniye İçindeki Sistem Davranışı</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Mevcut Kod (Uzun Kenar)</strong></td>
+                    <td>x=50 mm, y=0</td>
+                    <td>0.09</td>
+                    <td>0.012</td>
+                    <td>222 / 257</td>
+                    <td>Stabil, 4.89 saniyede merkeze oturdu</td>
+                </tr>
+                <tr>
+                    <td><strong>Mevcut Kod (Kısa Kenar)</strong></td>
+                    <td>x=0, y=50 mm</td>
+                    <td>0.09</td>
+                    <td>0.012</td>
+                    <td>222 / 257</td>
+                    <td><strong style="color: #c00000;">Rezonans! t = 1.92 saniyede platformdan fırladı!</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>Düzeltilmiş Kod (Kısa Kenar)</strong></td>
+                    <td>x=0, y=50 mm</td>
+                    <td>0.09</td>
+                    <td>0.012</td>
+                    <td>130 / 257</td>
+                    <td><strong style="color: #10b981;">Stabil, 4.89 saniyede merkeze oturdu</strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>4.3. Çözüm Metotları</h3>
+        <ol>
+            <li><strong>Yöntem 1 (Dönüşüm Normalizasyonu - Önerilen):</strong> Kısa kenar katsayısını 130/257 seviyesine eşitleyerek izotropik eksen kazancı elde etmek:
+                <pre>float x_hesap = (x_c * 130.0f / 257.0f) - (y_c * 130.0f / 257.0f);
+float y_hesap = -(x_c * 130.0f / 257.0f) - (y_c * 130.0f / 257.0f);</pre>
+            </li>
+            <li><strong>Yöntem 2 (Ayrık Eksen PID Kazançları):</strong>
+                <pre>#define KP_POS_X 0.035
+#define KD_POS_X 0.012
+#define KP_POS_Y 0.020  // 0.035 / 1.7
+#define KD_POS_Y 0.007  // 0.012 / 1.7</pre>
+            </li>
+        </ol>
+
+        <!-- Bölüm 5 -->
+        <h2>5. Web Tabanlı Dijital İkiz ve Telemetri Mimarisi</h2>
+        <p>Proje kapsamında modern tarayıcı standartlarını kullanan sıfır kurulumlu bir dijital ikiz arayüzü geliştirilmiştir:</p>
+        <ul>
+            <li><strong>Web Serial API:</strong> Tarayıcı üzerinden doğrudan donanım COM portuna 115200 baud ile bağlanarak gerçek zamanlı veri akışı sağlar.</li>
+            <li><strong>Three.js 3D İnteraktif Simülatör:</strong> Platformun tabanını, 6 adet hareketli servo kolunu, rot bacaklarını ve topun yuvarlanmasını milimetrik hassasiyetle 3 boyutlu canlandırır.</li>
+            <li><strong>Çevrimdışı Fizik Motoru:</strong> ESP32 bağlı değilken de test yapılabilmesi için eğik düzlem fiziği, sürtünme ve mikrodenetleyici döngü gecikmeleri birebir modellenmiştir. Kullanıcı 3D ekrana fare ile tıklayarak topu istediği noktaya bırakabilir.</li>
+            <li><strong>Chart.js Telemetri Grafikleri:</strong> Pozisyon (X, Y), Hız (Vx, Vy) ve Kontrol Açıları (Roll, Pitch) 20 Hz hızında gerçek zamanlı çizdirilir.</li>
+        </ul>
+
+        <!-- Bölüm 6 -->
+        <h2>6. Proje Dosya Yapısı</h2>
+        <ul>
+            <li><strong>index.html:</strong> Dashboard yerleşimi, kontrol panelleri, 3D ekran ve grafik konteynerleri.</li>
+            <li><strong>style.css:</strong> Koyu tema, glassmorphism cam efektleri ve responsive grid tasarımı.</li>
+            <li><strong>simulation.js:</strong> Three.js 3D platform kinematiği ve fizik simülasyon motoru.</li>
+            <li><strong>charts.js:</strong> Gerçek zamanlı grafik akış yöneticisi.</li>
+            <li><strong>app.js:</strong> Web Serial port okuyucu, Regex veri ayrıştırıcı ve kontrolcü.</li>
+            <li><strong>serve.ps1:</strong> Harici bağımlılık olmadan çalışan saf PowerShell yerel web sunucusu (http://localhost:8080).</li>
+        </ul>
+
+        <!-- Bölüm 7 -->
+        <h2>7. Sonuç</h2>
+        <div class="alert-box success">
+            <strong>Sonuç:</strong> Bu çalışma kapsamında 6-DOF Stewart platformu üzerinde top dengeleme sistemi başarıyla gerçekleştirilmiş; dikdörtgen dokunmatik panellerde ortaya çıkan kazanç asimetrisi ve faz gecikmesi kaynaklı rezonans problemi analitik ve deneysel yöntemlerle çözülmüştür. Geliştirilen Web Serial tabanlı dijital ikiz sistemi, kontrol algoritmalarının hem teorik hem pratik olarak izlenmesi ve doğrulanması için yenilikçi bir SCADA arayüzü sunmaktadır.
+        </div>
+    </div>
+
+</body>
+</html>
